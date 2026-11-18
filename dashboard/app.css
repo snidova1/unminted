@@ -11,6 +11,34 @@
 /* Desktop refinement 2: improve evidence typography and reserve a complete footer in 900px. */
 .intro{padding:12px 0}.stat{padding:8px 16px}.controls{padding-top:12px}.control-row label{gap:4px}.filter-line{min-height:32px}.table-top h2 span{font-size:10px}.radar-table th{font-size:10px}.radar-table td small{font-size:10px}.pagination{font-size:10px}.mini-formula{font-size:13px;white-space:nowrap}.rail p{font-size:11px}.rail .tiny{font-size:10px}.chip{min-height:26px}.pagination button{min-height:28px;min-width:32px}.detail-title{padding:8px 0}.detail-stats .stat{padding:6px 16px}.detail-left{gap:8px}.detail-left .sheet{padding:10px 12px}.factor-grid{gap:6px}.factor small{font-size:10px}.factor b{margin:1px 0}.detail-left .tiny{font-size:11px;line-height:1.35}.comps>p{font-size:11px;line-height:1.35}.comps td{padding:3px 0;font-size:11px}.comps th{font-size:9px}.quartiles{font-size:10px}.risk-box{padding:6px 0}.risk-box ul{font-size:11px;line-height:1.35;margin-top:4px}.calc-line{margin:8px 0 4px;font-size:10px}.range-labels{font-size:10px;margin:4px 0}.detail-grid{margin-top:12px}.farm-table td{font-size:12px;line-height:1.45;padding:8px 4px}.farm-table th{font-size:9px}.farm-table .cost-col,.farm-table .time-col{font-size:11px;line-height:1.4}.farm-table .step-num{padding-top:10px}.farm-intro{font-size:11px;margin:6px 0}.pool-note p{font:11px/1.4 var(--sans)}.pool-note .eyebrow{font-size:9px}.pool-note small{font-size:10px}.detail-bottom{font-size:10px;line-height:14px}.detail-page+footer{margin-top:8px}
 footer{padding-bottom:8px}
+.workspace>*{min-width:0}
 @media(min-width:1600px){.radar-table td{height:48px}.rail section{padding:20px 0}}
 @media(max-width:1100px){.top{gap:24px;padding:0 20px}main{padding:0 20px}.workspace{grid-template-columns:1fr}.rail{border-left:0;padding-left:0;display:grid;grid-template-columns:repeat(3,1fr);gap:24px}.intro>p{display:none}.detail-grid{grid-template-columns:310px minmax(0,1fr);gap:16px}.farm-table th:nth-child(3){width:90px}.farm-table th:nth-child(4){width:80px}.control-row{flex-wrap:wrap}.control-row label{min-width:140px}.snapshot>span{display:none}.pool-note{display:block}.pool-note p{margin-top:12px}}
 @media(max-width:760px){.top{height:auto;min-height:72px;flex-wrap:wrap;gap:20px;padding:16px}.snapshot{display:none}nav{gap:16px}nav a{font-size:9px}.intro h1{font-size:34px}.edition{display:none}.stats{grid-template-columns:repeat(2,1fr)}.stat{border-bottom:1px solid var(--line)}.stat:last-child{grid-column:span 2}.radar-table{min-width:850px}.workspace{gap:16px}.rail{grid-template-columns:1fr}.control-row label{min-width:120px}.filter-line>span{display:none}.table-top>span{display:none}.detail-grid{grid-template-columns:1fr}.detail-title h1{font-size:28px}.valuation strong{font-size:26px}.detail-stats{grid-template-columns:repeat(2,1fr)}.farm-table th:nth-child(3){width:90px}.farm-table th:nth-child(4){width:74px}.farm-sheet{padding:12px}.farm-head{align-items:start;flex-direction:column}.farm-table td{font-size:10px}.detail-bottom{align-items:start;flex-direction:column;gap:8px}.breadcrumb{gap:12px;font-size:8px}.breadcrumb span:last-child{display:none}footer{margin:16px 20px 0;flex-wrap:wrap}.detail-title p{max-width:50vw}}
+/* Keep desktop tables scrollable within the phone page, never resize the visual viewport. */
+@media(max-width:760px){
+  .workspace{grid-template-columns:minmax(0,1fr)}
+  .table-scroll{width:100%;overscroll-behavior-x:contain}
+  .table-top{flex-wrap:wrap;height:auto;min-height:48px;padding:8px 0;gap:4px}
+  .table-top::after{content:"SWIPE TABLE →";font:9px var(--mono);color:var(--signal)}
+  .pagination{height:auto;min-height:48px;flex-wrap:wrap;padding:8px 0;gap:8px}
+  .pagination>span .muted{display:block;margin:4px 0 0}
+  .detail-title{display:block;padding:16px 0}
+  .detail-title h1{font-size:30px}.detail-title p{max-width:none}
+  .valuation{margin:16px 0 0;text-align:left}
+  .valuation strong{font-size:32px}
+  .farm-table,.farm-table tbody{display:block}
+  .farm-table thead{display:none}
+  .farm-table tr{display:grid;grid-template-columns:28px minmax(0,1fr) minmax(0,1fr);border-bottom:1px solid var(--line);padding:12px 0;gap:8px 0}
+  .farm-table td{border:0;padding:0 4px;font-size:13px;line-height:1.55}
+  .farm-table td:first-child{grid-column:1;grid-row:1;padding-top:2px}
+  .farm-table td:nth-child(2){grid-column:2 / 4;grid-row:1}
+  .farm-table .cost-col{grid-column:2;grid-row:2;padding:0 4px;font-size:12px}
+  .farm-table .time-col{grid-column:3;grid-row:2;padding:0 4px;font-size:12px}
+  .cost-col::before,.time-col::before{display:block;font:9px var(--mono);letter-spacing:.5px;color:var(--signal);margin-bottom:4px}
+  .cost-col::before{content:"COST ALLOWANCE"}.time-col::before{content:"DURATION"}
+  .farm-intro,.pool-note p,.risk-box ul,.detail-left .tiny,.comps>p{font-size:12px}
+  .control-row input,.control-row select{font-size:14px;min-height:40px}
+  footer{font-size:9px}footer>span{overflow-wrap:anywhere}
+  .method{padding:16px}.method-head{align-items:start;gap:8px}.method-head h2{font-size:22px}.method-head button{flex-shrink:0}
+}

@@ -122,6 +122,49 @@ try {
     return { checked: RADAR.rows.length, failures };
   });
   assert.deepEqual(detailAudit.failures, []);
+  // Responsive regression: innerWidth can expand on mobile overflow, so compare against 390 itself.
+  const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
+  mobile.on('pageerror', e => errors.push(e.message));
+  await mobile.route('**/*', route => { if (!route.request().url().startsWith(origin)) { external.push(route.request().url()); return route.abort(); } return route.continue(); });
+  await mobile.goto(origin + '/dashboard/index.html', { waitUntil: 'networkidle' });
+  const fitsPhone = async () => assert.equal(await mobile.evaluate(() => document.documentElement.scrollWidth), 390, 'Mobile document overflow');
+  await fitsPhone();
+  assert.equal(await mobile.locator('tbody tr').count(), 10);
+  assert(await mobile.locator('.table-scroll').evaluate(e => e.scrollWidth > e.clientWidth), 'Dense table should scroll inside its container');
+  await mobile.locator('.table-scroll').evaluate(e => { e.scrollLeft = 300; });
+  assert(await mobile.locator('.table-scroll').evaluate(e => e.scrollLeft > 0));
+  await mobile.locator('[data-mode="live"]').last().click();
+  await fitsPhone();
+  assert.equal(await mobile.locator('tbody tr').count(), 10);
+  await mobile.locator('[data-mode="pre"]').last().click();
+  await fitsPhone();
+  await mobile.locator('#category').selectOption('Lending');
+  await fitsPhone();
+  await mobile.locator('tbody a').first().click();
+  await mobile.waitForSelector('.farm-table');
+  await fitsPhone();
+  assert.equal(await mobile.locator('.farm-table tbody tr').count(), 6);
+  assert.equal(await mobile.locator('.farm-table tbody tr').first().evaluate(e => getComputedStyle(e).display), 'grid');
+  await mobile.locator('#method-open').click();
+  assert.equal(await mobile.locator('dialog').evaluate(e => e.open), true);
+  await fitsPhone();
+  await mobile.locator('#close-method').click();
+  await mobile.waitForSelector('dialog', { state: 'detached' });
+  await mobile.locator('.breadcrumb a').click();
+  await mobile.waitForSelector('#category');
+  assert.equal(await mobile.locator('#category').inputValue(), 'Lending');
+  await fitsPhone();
+  const mobileDetailAudit = await mobile.evaluate(() => {
+    const failures = [];
+    for (const r of RADAR.rows) {
+      history.replaceState(null, '', '#' + encodeURIComponent(r.slug));
+      dispatchEvent(new HashChangeEvent('hashchange'));
+      if (document.documentElement.scrollWidth !== 390 || document.querySelectorAll('.farm-table tbody tr').length !== 6) failures.push(r.slug);
+    }
+    return failures;
+  });
+  assert.deepEqual(mobileDetailAudit, [], 'Mobile detail route overflow or missing steps');
+  await mobile.close();
   // Local file mode proves there is no dependency on the capture server.
   const file = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await file.goto(new URL('file:///' + join(out, 'dashboard/index.html').replaceAll('\\', '/')).href);
@@ -129,5 +172,5 @@ try {
   assert.equal(await file.locator('tbody tr').count(), 10);
   await file.close();
   assert.deepEqual(errors, [], 'Browser exceptions'); assert.deepEqual(external, [], 'External request attempted'); assert.deepEqual(missing, [], 'Missing assets');
-  console.log(JSON.stringify({ browserTests: 'PASS', ...meta, detail: detail.slug, detailRoutesChecked: detailAudit.checked, externalRequests: external.length, errors }));
+  console.log(JSON.stringify({ browserTests: 'PASS', ...meta, detail: detail.slug, detailRoutesChecked: detailAudit.checked, mobile: '390x844 PASS; contained table scroll, stacked steps, filters, modal, return navigation', externalRequests: external.length, errors }));
 } finally { if (browser) await browser.close(); await new Promise(r => server.close(r)); }
